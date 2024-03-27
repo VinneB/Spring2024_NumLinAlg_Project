@@ -1,0 +1,125 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      3458,        117]
+NotebookOptionsPosition[      3098,        103]
+NotebookOutlinePosition[      3505,        119]
+CellTagsIndexPosition[      3462,        116]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{"n", "=", "10"}], ";"}], "  "}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"h", "=", 
+    RowBox[{"1", "/", 
+     RowBox[{"(", 
+      RowBox[{"n", "-", "1"}], ")"}]}]}], ";"}], "  "}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"\[Nu]", "=", "1.0"}], ";"}], "  ", 
+  RowBox[{"(*", "Viscosity", "*)"}], "\n", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Second", " ", "order", " ", "dirilect", " ", "boundary", " ", 
+    "condtions"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"D2", "=", 
+   RowBox[{"Table", "[", 
+    RowBox[{"0", ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "n"}], "}"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"j", ",", "n"}], "}"}]}], "]"}]}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{"For", "[", 
+   RowBox[{
+    RowBox[{"i", "=", "2"}], ",", 
+    RowBox[{"i", "<", "n"}], ",", 
+    RowBox[{"i", "++"}], ",", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"D2", "[", 
+       RowBox[{"[", 
+        RowBox[{"i", ",", 
+         RowBox[{"i", "-", "1"}]}], "]"}], "]"}], "=", "1"}], ";", 
+     RowBox[{
+      RowBox[{"D2", "[", 
+       RowBox[{"[", 
+        RowBox[{"i", ",", "i"}], "]"}], "]"}], "=", 
+      RowBox[{"-", "2"}]}], ";", 
+     RowBox[{
+      RowBox[{"D2", "[", 
+       RowBox[{"[", 
+        RowBox[{"i", ",", 
+         RowBox[{"i", "+", "1"}]}], "]"}], "]"}], "=", "1"}]}]}], "]"}], 
+  ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"D2", "=", 
+    RowBox[{"\[Nu]", "*", 
+     RowBox[{"D2", "/", 
+      RowBox[{"h", "^", "2"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Assuming", " ", "1", "D", " ", "velocity", " ", "Distribution"}], 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"u", "=", 
+    RowBox[{"Table", "[", 
+     RowBox[{
+      RowBox[{"Sin", "[", 
+       RowBox[{"\[Pi]", "*", "x"}], "]"}], ",", 
+      RowBox[{"{", 
+       RowBox[{"x", ",", "0", ",", "1", ",", "h"}], "}"}]}], "]"}]}], ";"}], 
+  " ", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"Apply", " ", "the", " ", "diffusion", " ", "operator"}], ",", 
+    RowBox[{
+    "simulating", " ", "a", " ", "very", " ", "simple", " ", "step", " ", 
+     "in", " ", "fluid", " ", "dynamics"}]}], "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{"uNextStep", "=", 
+   RowBox[{"D2", ".", "u"}]}], ";"}], "\n"}], "Input",
+ CellChangeTimes->{{3.9205510479439545`*^9, 3.9205510479439545`*^9}, {
+  3.920552633590102*^9, 
+  3.9205527130048447`*^9}},ExpressionUUID->"5e922122-b59a-4f46-b652-\
+54a45dc9cb14"]
+},
+WindowSize->{571.8, 524.4},
+WindowMargins->{{284.4, Automatic}, {Automatic, 32.4}},
+FrontEndVersion->"13.3 for Microsoft Windows (64-bit) (July 24, 2023)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"f68c167c-fb23-4dbb-86ba-8e5bb04956dd"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 2536, 81, 352, "Input",ExpressionUUID->"5e922122-b59a-4f46-b652-54a45dc9cb14"]
+}
+]
+*)
+
