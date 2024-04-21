@@ -1,3 +1,5 @@
+# Note: Indexing starts at 0 in Python.
+
 # Import the required libraries.
 import numpy as np
 
@@ -12,23 +14,21 @@ def setBoundaryConditions(x1, y1, x2, y2):
 ################### Finite Difference Method: 1D ####################
 #####################################################################
 
-n = 10
-h = .05
-
 def get1DCoefficientMatrix(n):
-    A = np.zeros(n + 1, n + 1)
+    A = np.zeros((n + 1, n + 1))
     A[0, 0] = 1
-    A[n, n] = 1
-    for i in range(1, n):
+    for i in range(1, n): # Note: range() includes the first argument but not the second argument
         A[i, i - 1] = 1
         A[i, i] = -2
         A[i, i + 1] = 1
+    A[n, n] = 1
     return A
 
 def get1DbVector(n, h):
     b = np.zeros(n + 1)
-    b[1:-1] = -9.8 * h ** 2
-    b[-1] = 50
+    b[0] = 0
+    b[1:n] = -9.8 * h**2 # Note: ** in Python represents ^, and n is not included in the range
+    b[n] = 50
     return b
 
 def solve1DSystem(A, b):
@@ -63,3 +63,16 @@ def get2DbVector():
 def solve2DSystem(A, b):
     solved = np.linalg.solve(A, b)
     return solved
+
+
+#####################################################################
+########################## Test Functions ###########################
+#####################################################################
+n = 100
+h = 10**-4
+
+A = get1DCoefficientMatrix(n)
+print(A)
+b = get1DbVector(n, h)
+print(b)
+print(solve1DSystem(A, b))
