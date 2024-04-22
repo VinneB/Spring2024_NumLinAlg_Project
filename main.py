@@ -47,7 +47,7 @@ def solve1DHarmonicSystem(A, b):
 ###################################################################################################
 
 def bi_dim1_mat(n, h):
-    A = np.diag(np.full(n, -2, dtype=float)) + \
+    A = np.diag(np.full(n, 6, dtype=float)) + \
     np.diag(np.ones(n-1, dtype=float)*-4, -1) + \
     np.diag(np.ones(n-1, dtype=float)*-4, 1) + \
     np.diag(np.ones(n-2, dtype=float), -2) + \
@@ -66,38 +66,59 @@ def bi_dim1_mat(n, h):
 
     return A
 
-# Use f(x) = cos() this time, where f''''(x) = cos().
-def bi_dim1_vec(mesh, func, bc):
+def bi_dim1_mat_simp(n, h):
+    A = np.diag(np.full(n, 6, dtype=float)) + \
+    np.diag(np.ones(n-1, dtype=float)*-4, -1) + \
+    np.diag(np.ones(n-1, dtype=float)*-4, 1) + \
+    np.diag(np.ones(n-2, dtype=float), -2) + \
+    np.diag(np.ones(n-2, dtype=float), 2)
+    # dtype unncessary
+    return A
+
+def bi_dim1_vec(mesh, func):
     b = np.array(list(map(func, mesh)))
-    b[0] = bc[0]
-    b[-1] = bc[1]
     return b
 
-# Returns 
-# If a stepsize (h) and number of spacial values are specified, stepsize takes precedence
-def bi_dim1_solve(func, range, bc, n=-1, h=-1):
-    if (n==-1 and h==-1):
-        raise Exception("must specify n or h")
-    
-    range[0] = float(range[0])
-    range[1] = float(range[1])
-    bc[0] = float(bc[0])
-    bc[1] = float(bc[1])
-
-    mesh = (np.linspace(range[0], range[1], n), np.arange(range[0], range[1]+h, h)) [h != -1]
-    #print("{} of type {}".format(mesh, type(mesh)))
-
-    
+def bi_dim1_solve(func, range, bc, n):
+    h = (range[1] - range[0])/(n-1)
+    mesh = np.linspace(range[0], range[1], n)
+    D = bi_dim1_mat_simp(n, h)
     # Generate b
-    b = bi_dim1_vec(mesh, func, bc)
+    b = bi_dim1_vec(mesh, func)
+    b = b * (h ** 4)
+    # Left Dirchilet Boundary Cond
+    D[0][0] = 1.
+    D[0][1] = 0.
+    D[0][2] = 0.
+    b[0] = bc[0][0]
+    D[n-1][n-3] = 0.
+    D[n-1][n-2] = 0.
+    D[n-1][n-1] = 1.0
+    b[n-1] = bc[0][1]
+    # u' dirchilet condition on left
+    D[1][1] = 7.0
+    b[1] = b[1] + (2.0 * h * bc[1][0])
+    # u' dirchilet condition on right
+    D[n-2][n-2] = 7.0
+    b[n-2] = b[n-2] - (2.0 * h * bc[1][0])
+    return mesh, D, np.linalg.solve(D, b)
 
-    # Generate difference matrix
-    if (n == -1):
-        n = (range[1] - range[0])/h
-    elif (h == -1):
-        h = (range[1] - range[0])/n
-    D = bi_dim1_mat(n, h)
-    return mesh, b, D, np.linalg.solve(D, b * np.dot(np.ones(n), (h ** 4)))
+def biharmonic_exact(x):
+    l = -1.
+    r = 1.
+
+    A = [[1.0, l, (l**2), (l**3)],
+         [0.0, 1.0, 2.0*l, 3.0*(l**2)],
+         [1.0, r, (r**2), (r**3)],
+         [0.0, 1.0, 2.0*r, 3.0*(r**2)]
+         ]
+    
+    b = [-np.exp(l), -np.exp(l), -np.exp(r), -np.exp(r)]
+    c = np.linalg.solve(A,b)
+
+    u = c[0] + (c[1]*x) + (c[2]*np.array(list(map(lambda a: (a ** 2), x)))) + (c[3]*np.array(list(map(lambda a: (a ** 3), x)))) + \
+        np.exp(x)
+    return np.array(u)
 
     
 
@@ -150,13 +171,15 @@ def solve2DSystem(A, b):
 np.set_printoptions(linewidth = 100) # Set threshold = np.inf to see the entire matrix
 
 def temp():
-    mesh, b, D, res = bi_dim1_solve(np.cos, [0, np.pi], [1., -1.], n = 20)
-    print("Result")
+    mesh, D, res = bi_dim1_solve(np.exp, [-1., 1.], [[0.,0.],[0.,0.]], n = 20)
+    print("Finite Difference Result")
     print(res)
-    print("b")
-    print(b)
-    print("mesh")
-    print(mesh)
+    print("Exact Answer (Calculated using Biharmonic Coefficients)")
+    exact = biharmonic_exact(np.linspace(-1, 1, 20))
+    print(exact)
+    print("Differential Matrix")
+    print(D)
+    print("Residue = {}".format(np.linalg.norm(res-exact)))
 
 """
 # Test the 1D harmonic implementation.
